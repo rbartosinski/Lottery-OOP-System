@@ -50,6 +50,53 @@ class Ticket():
             cnx.commit()
             return True
 
+    @staticmethod#potrzebna do weryfikacji użytkowników
+    def load_ticket_by_name(cursor, first_name, last_name):
+        sql = 'SELECT id, first_name, last_name, selected_numbers FROM Tickets WHERE first_name="{}", last_name="{}"'
+        cursor.execute(sql.format(first_name, last_name))
+        data = cursor.fetchone()
+        if data is not None:
+            loaded_ticket = Ticket()
+            loaded_ticket.__id = row[0]
+            loaded_ticket.first_name = row[1]
+            loaded_ticket.last_name = row[2]
+            loaded_ticket.selected_numbers = row[3]
+            return loaded_ticket
+        else:
+            return None
+
+    @staticmethod#potrzebna do sprawdzenia kto wygrał - metofa chyba lepsz
+    def load_ticket_by_number(cursor, selected_numbers):
+        sql = 'SELECT id, first_name, last_name, selected_numbers FROM Tickets WHERE selected_numbers="{}"'
+        ret = []
+        cursor.execute(sql.format(selected_numbers))
+        result = cursor.fetchall()
+        for row in result:
+            loaded_ticket = Ticket()
+            loaded_ticket.__id = row[0]
+            loaded_ticket.first_name = row[1]
+            loaded_ticket.last_name = row[2]
+            loaded_ticket.selected_numbers = row[3]
+            ret.append(loaded_ticket)
+            return ret
+        else:
+            return None
+
+    @staticmethod#potrzebna do sprawdzenia kto wygrał
+    def load_all_tickets(cursor):
+        sql = 'SELECT id, first_name, last_name, selected_numbers FROM Tickets'
+        ret = []
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for row in result:
+            loaded_ticket = Ticket()
+            loaded_ticket.__id = row[0]
+            loaded_ticket.first_name = row[1]
+            loaded_ticket.last_name = row[2]
+            loaded_ticket.selected_numbers = row[3]
+            ret.append(loaded_ticket)
+        return ret
+
 
 def new_ticket():
 
@@ -67,5 +114,5 @@ def new_ticket():
     print("Kupon został dodany")
 
 
-new_ticket()
+# new_ticket()
 cnx.close()
